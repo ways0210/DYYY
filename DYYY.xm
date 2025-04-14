@@ -1703,8 +1703,6 @@ static void DYYYAddCustomViewToParent(UIView *parentView, float transparency) {
 	return [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisEnableArea"];
 }
 
-%end
-
 %hook AWEModernLongPressPanelTableViewController
 
 - (NSArray *)dataArray {
