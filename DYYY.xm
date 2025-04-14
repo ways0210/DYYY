@@ -1633,49 +1633,45 @@ static void DYYYAddCustomViewToParent(UIView *parentView, float transparency) {
 
 %hook AWEPlayInteractionTimestampElement
 - (id)timestampLabel {
-    UILabel *label = %orig;
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisEnableArea"]) {
-        NSString *originalText = label.text;
-        NSString *cityCode = self.model.cityCode;
-        NSString *districtCode = self.model.districtCode; // 新增区县代码
-        
-        // 获取三级行政区划名称（确保不为nil）
-        NSString *provinceName = [CityManager.sharedInstance getProvinceNameWithCode:cityCode] ?: @"";
-        NSString *cityName = [CityManager.sharedInstance getCityNameWithCode:cityCode] ?: @"";
-        NSString *districtName = districtCode.length > 0 ? 
-            [CityManager.sharedInstance getDistrictNameWithCode:districtCode] ?: @"" : @""; // 新增区县名
-        
-        // 直辖市判断（代码前缀：11-北京，12-天津，31-上海，50-重庆）
-        BOOL isDirectCity = [provinceName isEqualToString:cityName] ||
-                            [cityCode hasPrefix:@"11"] || [cityCode hasPrefix:@"12"] ||
-                            [cityCode hasPrefix:@"31"] || [cityCode hasPrefix:@"50"];
-        
-        // 构建属地文本（三级逻辑）
-        NSMutableString *locationText = [NSMutableString string];
-        if (provinceName.length > 0 && cityName.length > 0) {
-            // 基础格式：省+市（非直辖）或 直辖市（直辖）
-            if (isDirectCity) {
-                [locationText appendFormat:@"%@", cityName]; // 直辖市直接显示市名（等于省名）
-            } else {
-                [locationText appendFormat:@"%@ %@", provinceName, cityName]; // 普通省+市
-            }
-            
-            // 追加区县（若存在）
-            if (districtName.length > 0 && ![districtName isEqualToString:cityName]) { // 避免区县名等于市名（如县级市）
-                [locationText appendFormat:@" %@", districtName]; // 市+区县
-            }
-        }
-        
-        // 仅当属地信息有效时拼接
-        if (locationText.length > 0 && ![originalText containsString:@"IP属地："]) {
-            label.text = [NSString stringWithFormat:@"%@  IP属地：%@", originalText, locationText];
-        }
-    }
-    return label;
-}
+	UILabel *label = %orig;
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisEnableArea"]) {
+		NSString *text = label.text;
+		NSString *cityCode = self.model.cityCode;
 
-%end
-	
+		if (cityCode.length > 0) {
+			NSString *cityName = [CityManager.sharedInstance getCityNameWithCode:cityCode] ?: @"";
+			NSString *provinceName = [CityManager.sharedInstance getProvinceNameWithCode:cityCode] ?: @"";
+
+			if (cityName.length > 0 && ![text containsString:cityName]) {
+				if (!self.model.ipAttribution) {
+					BOOL isDirectCity = [provinceName isEqualToString:cityName] ||
+							    ([cityCode hasPrefix:@"11"] || [cityCode hasPrefix:@"12"] || [cityCode hasPrefix:@"31"] || [cityCode hasPrefix:@"50"]);
+
+					if (isDirectCity) {
+						label.text = [NSString stringWithFormat:@"%@  IP属地：%@", text, cityName];
+					} else {
+						label.text = [NSString stringWithFormat:@"%@  IP属地：%@ %@", text, provinceName, cityName];
+					}
+				} else {
+					BOOL isDirectCity = [provinceName isEqualToString:cityName] ||
+							    ([cityCode hasPrefix:@"11"] || [cityCode hasPrefix:@"12"] || [cityCode hasPrefix:@"31"] || [cityCode hasPrefix:@"50"]);
+
+					BOOL containsProvince = [text containsString:provinceName];
+					if (containsProvince && !isDirectCity) {
+						label.text = [NSString stringWithFormat:@"%@ %@", text, cityName];
+					} else if (containsProvince && isDirectCity) {
+						label.text = [NSString stringWithFormat:@"%@  IP属地：%@", text, cityName];
+					} else if (isDirectCity && containsProvince) {
+						label.text = text;
+					} else if (containsProvince) {
+						label.text = [NSString stringWithFormat:@"%@ %@", text, cityName];
+					} else {
+						label.text = text;
+					}
+				}
+			}
+		}
+	}
 	// 应用IP属地标签上移
 	NSString *ipScaleValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYNicknameScale"];
 	if (ipScaleValue.length > 0) {
@@ -1697,11 +1693,13 @@ static void DYYYAddCustomViewToParent(UIView *parentView, float transparency) {
 		label.textColor = [DYYYManager colorWithHexString:labelColor];
 	}
 	return label;
-
+}
 
 + (BOOL)shouldActiveWithData:(id)arg1 context:(id)arg2 {
 	return [[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisEnableArea"];
 }
+
+%end
 
 %hook AWEModernLongPressPanelTableViewController
 
