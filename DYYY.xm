@@ -1675,10 +1675,7 @@ static void DYYYAddCustomViewToParent(UIView *parentView, float transparency) {
 }
 
 %end
-				}
-			}
-		}
-	}
+	
 	// 应用IP属地标签上移
 	NSString *ipScaleValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYNicknameScale"];
 	if (ipScaleValue.length > 0) {
