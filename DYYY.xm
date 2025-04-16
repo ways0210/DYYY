@@ -1640,76 +1640,67 @@ static void DYYYAddCustomViewToParent(UIView *parentView, float transparency) {
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DYYYisEnableArea"]) {
         NSString *text = label.text;
         NSString *areaCode = self.model.cityCode;
+
         NSLog(@"[XUUZ] 当前 areaCode: %@ (%lu 位)", areaCode, (unsigned long)areaCode.length);
 
         NSString *province = [CityManager.sharedInstance getProvinceNameWithCode:areaCode] ?: @"";
         NSString *city = [CityManager.sharedInstance getCityNameWithCode:areaCode] ?: @"";
-        NSString *district = [CityManager.sharedInstance getDistrictNameWithCode:areaCode] ?: @""; // 区县字段
+        NSString *district = [CityManager.sharedInstance getDistrictNameWithCode:areaCode] ?: @"";
         NSString *street = [CityManager.sharedInstance getStreetNameWithCode:areaCode] ?: @"";
 
         NSMutableArray *components = [NSMutableArray new];
         NSString *prefix = areaCode.length >= 2 ? [areaCode substringToIndex:2] : @"";
-        BOOL isDirectCity = [@[@"11", @"12", @"31", @"50"] containsObject:prefix]; // 新增直辖市标记
 
-        // ====================== 核心逻辑修改区域 ======================
         if ([@[@"81", @"82", @"71"] containsObject:prefix]) {
-            // 港澳台地区：原有逻辑（显示所有有效层级）
-            [self addNonNilComponent:province toArray:components];
-            [self addNonNilComponent:city toArray:components];
-            [self addNonNilComponent:district toArray:components]; // 新增：显示区县
-            [self addNonNilComponent:street toArray:components];
+            
+            if (province.length > 0) [components addObject:province];
+            if (city.length > 0) [components addObject:city];
+            if (district.length > 0) [components addObject:district];
         } else {
-            // 普通地区（含直辖市）：强制直辖市显示区县，非直辖市按原逻辑
-            if (!isDirectCity && province.length > 0 && areaCode.length >= 2) {
+
+            if (province.length > 0 && areaCode.length >= 2) {
                 [components addObject:province];
             }
 
-            // 直辖市的城市名=省份名，仍需显示城市（避免重复时可不显示，但区县必须显示）
-            if (areaCode.length >= 4 && city.length > 0 && (!isDirectCity || !city.isEqualToString(province))) {
+            if (city.length > 0 && areaCode.length >= 4 && ![city isEqualToString:province]) {
                 [components addObject:city];
             }
 
-            // **关键修改：无论是否为直辖市，只要有区县且代码长度≥6，就显示区县**
             if (district.length > 0 && areaCode.length >= 6) {
-                [components addObject:district]; // 强制添加区县
+                [components addObject:district];
             }
 
             if (street.length > 0 && areaCode.length >= 9) {
                 [components addObject:street];
             }
         }
-        // ====================== 核心逻辑修改结束 ======================
 
         if (components.count > 0) {
             NSString *locationString = [components componentsJoinedByString:@" "];
+            NSString *cleanedText = [text stringByReplacingOccurrencesOfString:@"IP属地：.*"
+                                                                    withString:@""
+                                                                       options:NSRegularExpressionSearch
+                                                                         range:NSMakeRange(0, text.length)];
 
-            // 台湾地区特殊处理（假设原逻辑需保留）
             if ([prefix isEqualToString:@"71"] && [district containsString:@"福建省"]) {
-                locationString = [locationString stringByReplacingOccurrencesOfString:@"(福建省)" withString:@"" options:0 range:NSMakeRange(0, locationString.length)];
+                locationString = [locationString stringByReplacingOccurrencesOfString:@"(福建省)"
+                                                                          withString:@""
+                                                                             options:NSRegularExpressionSearch
+                                                                               range:NSMakeRange(0, locationString.length)];
             }
 
-            // 清理原文本中的旧属地信息
-            NSString *cleanedText = [text stringByReplacingOccurrencesOfString:@"IP属地：.*" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, text.length)];
-            cleanedText = [cleanedText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-            
-            label.text = [NSString stringWithFormat:@"%@  IP属地：%@", cleanedText, locationString];
+            label.text = [NSString stringWithFormat:@"% @ IP属地：%@",
+                          [cleanedText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]],
+                          locationString];
         }
     }
 
-    // 颜色设置（保留原逻辑）
     NSString *labelColor = [[NSUserDefaults standardUserDefaults] objectForKey:@"DYYYLabelColor"];
     if (labelColor.length > 0) {
         label.textColor = [DYYYManager colorWithHexString:labelColor];
     }
 
     return label;
-}
-
-// 辅助方法：安全添加非空字符串（新增，避免重复代码）
-- (void)addNonNilComponent:(NSString *)component toArray:(NSMutableArray *)array {
-    if (component.length > 0) {
-        [array addObject:component];
-    }
 }
 
 + (BOOL)shouldActiveWithData:(id)arg1 context:(id)arg2 {
