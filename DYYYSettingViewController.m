@@ -382,17 +382,17 @@ typedef NS_ENUM(NSInteger, DYYYSettingItemType) {
                 [DYYYSettingItem itemWithTitle:@"启用保存他人头像" key:@"DYYYEnableSaveAvatar" type:DYYYSettingItemTypeSwitch],
                 [DYYYSettingItem itemWithTitle:@"禁用点击首页刷新" key:@"DYYYDisableHomeRefresh" type:DYYYSettingItemTypeSwitch],
                 [DYYYSettingItem itemWithTitle:@"禁用双击视频点赞" key:@"DYYYDouble" type:DYYYSettingItemTypeSwitch],
-                [DYYYSettingItem itemWithTitle:@"评论区-双击触发" key:@"DYYYEnableDoubleOpenComment" type:DYYYSettingItemTypeSwitch],
-                [DYYYSettingItem itemWithTitle:@"评论区-长按复制文本" key:@"DYYYEnableCommentCopyText" type:DYYYSettingItemTypeSwitch],
+                [DYYYSettingItem itemWithTitle:@"启用双击打开评论" key:@"DYYYEnableDoubleOpenComment" type:DYYYSettingItemTypeSwitch],
+                [DYYYSettingItem itemWithTitle:@"评论区仅复制文本" key:@"DYYYEnableCommentCopyText" type:DYYYSettingItemTypeSwitch],
                 [DYYYSettingItem itemWithTitle:@"长按面板复制功能" key:@"DYYYCopyText" type:DYYYSettingItemTypeSwitch],
-                [DYYYSettingItem itemWithTitle:@"评论区-保存动态图" key:@"DYYYCommentLivePhotoNoWaterMark" type:DYYYSettingItemTypeSwitch],
-                [DYYYSettingItem itemWithTitle:@"评论区-保存图片" key:@"DYYYCommentNoWaterMark" type:DYYYSettingItemTypeSwitch],
-                [DYYYSettingItem itemWithTitle:@"评论区-保存表情包" key:@"DYYYInterfaceDownload" type:DYYYSettingItemTypeSwitch],
-                [DYYYSettingItem itemWithTitle:@"视频-时间属地显示" key:@"DYYYisEnableArea" type:DYYYSettingItemTypeSwitch],
-                [DYYYSettingItem itemWithTitle:@"属地前缀" key:@"DYYYLocationPrefix" type:DYYYSettingItemTypeTextField placeholder:@"IP:"],
-                [DYYYSettingItem itemWithTitle:@"长按视频-触发下载功能" key:@"DYYYLongPressDownload" type:DYYYSettingItemTypeSwitch],
+                [DYYYSettingItem itemWithTitle:@"评论区保存实况" key:@"DYYYCommentLivePhotoNoWaterMark" type:DYYYSettingItemTypeSwitch],
+                [DYYYSettingItem itemWithTitle:@"评论区保存图片" key:@"DYYYCommentNoWaterMark" type:DYYYSettingItemTypeSwitch],
+                [DYYYSettingItem itemWithTitle:@"评论区保存表情" key:@"DYYYInterfaceDownload" type:DYYYSettingItemTypeSwitch],
+                [DYYYSettingItem itemWithTitle:@"启用时间属地显示" key:@"DYYYisEnableArea" type:DYYYSettingItemTypeSwitch],
+                [DYYYSettingItem itemWithTitle:@"自定义属地前缀" key:@"DYYYLocationPrefix" type:DYYYSettingItemTypeTextField placeholder:@"IP:"],
+                [DYYYSettingItem itemWithTitle:@"启用长按下载" key:@"DYYYLongPressDownload" type:DYYYSettingItemTypeSwitch],
                 [DYYYSettingItem itemWithTitle:@"屏蔽广告" key:@"DYYYNoAds" type:DYYYSettingItemTypeSwitch],
-                [DYYYSettingItem itemWithTitle:@"头像-自定义文本" key:@"DYYYAvatarTapText" type:DYYYSettingItemTypeTextField placeholder:@"输入提示文本"],
+                [DYYYSettingItem itemWithTitle:@"头像文本自定义" key:@"DYYYAvatarTapText" type:DYYYSettingItemTypeTextField placeholder:@"输入提示文本"],
                 [DYYYSettingItem itemWithTitle:@"背景颜色" key:@"DYYYBackgroundColor" type:DYYYSettingItemTypeColorPicker],
                 [DYYYSettingItem itemWithTitle:@"启用快捷倍速按钮" key:@"DYYYEnableFloatSpeedButton" type:DYYYSettingItemTypeSwitch],
                 [DYYYSettingItem itemWithTitle:@"快捷倍速数值设置" key:@"DYYYSpeedSettings" type:DYYYSettingItemTypeTextField placeholder:@"逗号分隔"],
@@ -421,7 +421,7 @@ typedef NS_ENUM(NSInteger, DYYYSettingItemType) {
 
 - (void)setupFooterLabel {
     self.footerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 50)];
-    self.footerLabel.text = @"Developer By @huamidev\nVersion: 2.1-7++ (修改2025-04-04)";
+    self.footerLabel.text = @"Developer By @huamidev\nVersion: 2.2-4_end++ (2025-04-16)";
     self.footerLabel.textAlignment = NSTextAlignmentCenter;
     self.footerLabel.font = [UIFont systemFontOfSize:14];
     self.footerLabel.textColor = [UIColor secondaryLabelColor];
