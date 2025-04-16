@@ -1673,24 +1673,6 @@ static void DYYYAddCustomViewToParent(UIView *parentView, float transparency) {
             if (street.length > 0 && areaCode.length >= 9) {
                 [components addObject:street];
             }
-           // 普通地区（含直辖市）：强制直辖市显示区县，非直辖市按原逻辑
-            if (!isDirectCity && province.length > 0 && areaCode.length >= 2) {
-                [components addObject:province];
-            }
-
-            // 直辖市的城市名=省份名，仍需显示城市（避免重复时可不显示，但区县必须显示）
-            if (areaCode.length >= 4 && city.length > 0 && (!isDirectCity || !city.isEqualToString(province))) {
-                [components addObject:city];
-            }
-
-            // **关键修改：无论是否为直辖市，只要有区县且代码长度≥6，就显示区县**
-            if (district.length > 0 && areaCode.length >= 6) {
-                [components addObject:district]; // 强制添加区县
-            }
-
-            if (street.length > 0 && areaCode.length >= 9) {
-                [components addObject:street];
-            }
         }
 
         if (components.count > 0) {
