@@ -1,16 +1,12 @@
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
 @interface CityManager : NSObject
 
+@property (nonatomic, strong) NSDictionary *cityCodeMap;
+
 + (instancetype)sharedInstance;
+- (NSString *)getCityNameWithCode:(NSString *)code;
+- (NSString *)getProvinceNameWithCode:(NSString *)code;
+- (void)loadCityData;
 
-- (nullable NSString *)getProvinceNameWithCode:(NSString *)code;
-- (nullable NSString *)getCityNameWithCode:(NSString *)code;
-- (nullable NSString *)getDistrictNameWithCode:(NSString *)code;
-- (nullable NSString *)getStreetNameWithCode:(NSString *)code;
-
-@end
-
-NS_ASSUME_NONNULL_END
+@end 
